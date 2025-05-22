@@ -72,6 +72,10 @@ public class TaskController {
     @PutMapping("/{id}/update")
     public String update(@PathVariable("id") long id, @Validated @ModelAttribute TaskForm form, BindingResult result, Model model) {
 
+        if (!taskService.existsById(id)) {
+            throw new TaskNotFoundException();
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("taskForm", form);
             return "tasks/edit";

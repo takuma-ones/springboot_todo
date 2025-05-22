@@ -22,6 +22,11 @@ public class TaskService {
         return taskRepository.selectById(id);
     }
 
+    public boolean existsById(long id) {
+        return taskRepository.selectById(id).isPresent();
+    }
+
+
     @Transactional
     public void create(TaskEntity newEntity) {
         taskRepository.insert(newEntity);
