@@ -23,4 +23,23 @@ public record TaskForm(
                 TaskStatus.valueOf(status)
         );
     }
+
+    public TaskEntity toEntity(long id) {
+        return new TaskEntity(
+                id,
+                summary,
+                description,
+                TaskStatus.valueOf(status)
+        );
+    }
+
+
+
+    public static TaskForm fromEntity(TaskEntity entity) {
+        return new TaskForm(
+                entity.summary(),
+                entity.description(),
+                entity.status().name()
+        );
+    }
 }

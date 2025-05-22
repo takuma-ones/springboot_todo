@@ -34,7 +34,7 @@ public class TaskController {
     public String showDetail(@PathVariable("id") long id, Model model) {
         TaskDTO task = taskService.findById(id)
                 .map(TaskDTO::toDTO)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found: " + id));
+                .orElseThrow(TaskNotFoundException::new);
         model.addAttribute("task", task);
         return "tasks/detail";
     }
@@ -57,4 +57,35 @@ public class TaskController {
 
         return "redirect:/tasks";
     }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable("id") long id, Model model) {
+        TaskForm task = taskService.findById(id)
+                .map(TaskForm::fromEntity)
+                .orElseThrow(TaskNotFoundException::new);
+        model.addAttribute("taskForm", task);
+        return "tasks/edit";
+    }
+
+
+    @PutMapping("/{id}/update")
+    public String update(@PathVariable("id") long id, @Validated @ModelAttribute TaskForm form, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("taskForm", form);
+            return "tasks/edit";
+        }
+
+        // タスクを更新する
+        taskService.update(form.toEntity(id));
+
+        return "redirect:/tasks/{id}";
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public String delete(@PathVariable("id") long id) {
+        taskService.delete(id);
+        return "redirect:/tasks";
+    }
+
 }
